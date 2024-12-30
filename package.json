@@ -1,0 +1,22 @@
+{
+  "name": "devtree",
+  "version": "1.0.0",
+  "description": "Devtree is a project to learn new technologies and practice them.",
+  "main": "index.js",
+  "author": "Jorge Zamit <jzamit@gmail.com>",
+  "license": "ISC",
+  "scripts": {
+    "dev": "concurrently \"npm:monitor\" \"npm:sync\"",
+    "start": "node index.js",
+    "monitor": "nodemon index.js",
+    "sync": "browser-sync start --proxy 'http://localhost:3000' --port 3001 --files 'src/**/*.{ts,js,css,html}'"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.3",
+    "concurrently": "^9.1.1",
+    "nodemon": "^3.1.9"
+  }
+}
