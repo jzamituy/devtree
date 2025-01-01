@@ -1,12 +1,7 @@
-import express from "express";
+import server from "./server";
 
-const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get("/", (req, res) => {
-  res.send(JSON.stringify(req.ip));
-});
-
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
