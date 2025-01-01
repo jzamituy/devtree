@@ -2,21 +2,23 @@
   "name": "devtree",
   "version": "1.0.0",
   "description": "Devtree is a project to learn new technologies and practice them.",
-  "main": "index.js",
+  "main": "index.ts",
   "author": "Jorge Zamit <jzamit@gmail.com>",
   "license": "ISC",
   "scripts": {
-    "dev": "concurrently \"npm:monitor\" \"npm:sync\"",
-    "start": "node index.js",
-    "monitor": "nodemon index.js",
-    "sync": "browser-sync start --proxy 'http://localhost:3000' --port 3001 --files 'src/**/*.{ts,js,css,html}'"
+    "start": "node index.ts",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "build": "tsc",
+    "clean": "node -e \"require('fs').rmSync('dist', { recursive: true, force: true });\""
   },
   "dependencies": {
     "express": "^4.21.2"
   },
   "devDependencies": {
-    "browser-sync": "^3.0.3",
-    "concurrently": "^9.1.1",
-    "nodemon": "^3.1.9"
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.3",
+    "nodemon": "^3.1.9",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
   }
 }
