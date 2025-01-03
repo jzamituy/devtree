@@ -1,24 +1,23 @@
-import { Router } from "express";
-import User from "./models/User";
+import { Request, Response } from "express";
 
+import { Router } from "express";
+import { registerUser, loginUser } from "./handlers";
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", (req: Request, res: Response) => {
   res.send('root');
 });
 
-router.get("/test", (req, res) => {
+router.get("/test", (req: Request, res: Response) => {
     res.send('test');
   });
 
-router.post("/auth/register", (req, res) => {
-  const user = new User({name:'test', email:'test@test.com', password:'test'})
-  user.save()
-  res.send('registered');
+router.post("/auth/register", (req: Request, res: Response  ) => {
+  registerUser(req, res);
 });
 
-router.post("/auth/login", (req, res) => {
-  res.send('login');
+router.post("/auth/login", (req: Request, res: Response) => {
+  loginUser(req, res);
 });
   
 export default router;
