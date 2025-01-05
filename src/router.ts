@@ -1,31 +1,28 @@
-import { Request, Response } from "express";
+import { Request, Response, Router } from "express";
 import { body } from "express-validator";
-import { Router } from "express";
 import { registerUser, loginUser } from "./handlers";
+import { handleValidationErrors } from "./middleware/validation";
+
 const router = Router();
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/", (_req: Request, res: Response): void => {
   res.send('root');
 });
 
-router.get("/test", (req: Request, res: Response) => {
-    res.send('test');
-  });
+router.get("/test", (_req: Request, res: Response): void => {
+  res.send('test');
+});
 
 router.post("/auth/register", [
   body("name").isString().notEmpty().withMessage("Name is required"),
   body("password").isString().isLength({ min: 8 }).withMessage("Password must be at least 8 characters"),
   body("email").isEmail().withMessage("Invalid email"),
   body("handle").isString().notEmpty().withMessage("Handle is required"),
-], (req: Request, res: Response  ) => {
-  registerUser(req, res);
-});
+], handleValidationErrors, registerUser);
 
 router.post("/auth/login", [
   body("email").isEmail().withMessage("Email is not valid"),
   body("password").isString().isLength({ min: 8 }).withMessage("Password must be at least 8 characters"),
-], (req: Request, res: Response) => {
-  loginUser(req, res);
-});
-  
+], handleValidationErrors, loginUser);
+    
 export default router;
