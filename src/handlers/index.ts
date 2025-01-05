@@ -6,47 +6,43 @@ import { validationResult } from "express-validator";
 import { validatePassword } from "../utils";
 // Handler examples most basic architecture
 
-export const registerUser = async (req: Request, res: Response) => {
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
+export const registerUser = async (req: Request, res: Response): Promise<void> => {
 
     const { name , password , email , handle} = req.body;
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-        return res.status(409).json({ message: "User already exists for this email" });
+         res.status(409).json({ message: "User already exists for this email" });
+         return;
     }
 
     const handleExists = await User.findOne({ handle });
     if (handleExists) {
-        return res.status(409).json({ message: "Handle already exists" });  
+        res.status(409).json({ message: "Handle already exists" });  
+        return;
     }
 
     const user = new User({ name, password, email, handle });
     user.password = await hashPassword(password);
     user.handle = slugify(handle, '');
     user.save();
-    res.json(user);
+    res.status(201).json({ message: "User created successfully" });
+    return;
 };
 
-export const loginUser = async (req: Request, res: Response) => {
+export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const { username, password } = req.body;
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
 
     const user = await User.findOne({ username });
     if (!user) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        res.status(401).json({ message: "Invalid credentials" });
+        return;
     }
     const isPasswordValid = await validatePassword(password, user.password);
     if (!isPasswordValid) {
-        return res.status(401).json({ message: "Invalid credentials" });
+        res.status(401).json({ message: "Invalid credentials" });
+        return;
     }
-    res.json(user);
+    res.status(200).json({ message: "Login successful" });
+    return;
 };
