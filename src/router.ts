@@ -21,7 +21,10 @@ router.post("/auth/register", [
   registerUser(req, res);
 });
 
-router.post("/auth/login", (req: Request, res: Response) => {
+router.post("/auth/login", [
+  body("email").isEmail().withMessage("Email is not valid"),
+  body("password").isString().isLength({ min: 8 }).withMessage("Password must be at least 8 characters"),
+], (req: Request, res: Response) => {
   loginUser(req, res);
 });
   
