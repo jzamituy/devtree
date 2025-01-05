@@ -3,7 +3,7 @@ import User from "../models/User";
 import { hashPassword } from "../utils";
 import slugify from "slugify";
 import { validationResult } from "express-validator";
-
+import { validatePassword } from "../utils";
 // Handler examples most basic architecture
 
 export const registerUser = async (req: Request, res: Response) => {
@@ -34,9 +34,19 @@ export const registerUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response) => {
     const { username, password } = req.body;
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const user = await User.findOne({ username });
     if (!user) {
-        return res.status(401).json({ message: "User not found" });
+        return res.status(401).json({ message: "Invalid credentials" });
+    }
+    const isPasswordValid = await validatePassword(password, user.password);
+    if (!isPasswordValid) {
+        return res.status(401).json({ message: "Invalid credentials" });
     }
     res.json(user);
 };
