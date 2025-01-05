@@ -1,15 +1,27 @@
 import { Request, Response } from "express";
 import User from "../models/User";
 import { hashPassword } from "../utils";
+import slugify from "slugify";
 
 
 // Handler examples most basic architecture
 
 export const registerUser = async (req: Request, res: Response) => {
-    const { name = 'jorge', password = '1234', email = 'jorge@jorge.com' } = req.body;
+    const { name , password , email , handle} = req.body;
 
-    const user = new User({ name, password, email });
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+        return res.status(409).json({ message: "User already exists for this email" });
+    }
+
+    const handleExists = await User.findOne({ handle });
+    if (handleExists) {
+        return res.status(409).json({ message: "Handle already exists" });  
+    }
+
+    const user = new User({ name, password, email, handle });
     user.password = await hashPassword(password);
+    user.handle = slugify(handle, '');
     user.save();
     res.json(user);
 };
